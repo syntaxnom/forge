@@ -1,4 +1,74 @@
-index.yaml 
-https://raw.githubusercontent.com/syntaxnom/forge/refs/heads/main/index.yaml
-https://github.com/syntaxnom/forge/blob/main/index.yaml
+# index.yaml - forge 项目文件索引
+# 用于检索项目中文件的 raw 访问路径，同步项目上下文
 
+project:
+  name: "forge"
+  description: "一个关于同步工作的架构演化与实现项目"
+  mainBranch: "main"
+
+
+
+# 核心：文件索引列表
+files:
+  - category: "项目基础"
+    items:
+      - name: "开源许可证"
+        path: "/LICENSE"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/LICENSE"
+        description: "项目所使用的开源许可证文件"
+
+  - category: "核心架构"
+    items:
+      - name: "架构推演记录"
+        path: "/frame-versions/架构推演.md"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/frame-versions/%E6%9E%B6%E6%9E%84%E6%8E%A8%E6%BC%94.md"
+        description: "记录架构设计演化的过程与版本"
+        critical: true
+      - name: "架构实现入口 (Python)"
+        path: "/my-main/null.py"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/my-main/null.py"
+        description: "架构的核心实现入口文件"
+
+  - category: "使用指南"
+    items:
+      - name: "GitHub 使用指南"
+        path: "/how-to-use-github.md"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/how-to-use-github.md"
+        description: "记录GitHub的使用方法和技巧，便于查阅"
+
+  - category: "过程记录"
+    items:
+      - name: "调试日志示例"
+        path: "/debug-log/fail-log.md"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/debug-log/fail-log.md"
+        description: "用于存放错误日志，配合调试使用"
+      - name: "对话历史总览"
+        path: "/token-history/token-all.md"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/token-history/token-all.md"
+        description: "汇总与AI的对话历史"
+      - name: "对话历史-分段1"
+        path: "/token-history/token-1.md"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/token-history/token-1.md"
+        description: "与AI的对话历史分段记录 (第一部分)"
+
+# 定义工作集，方便一次性加载相关文件
+workspaces:
+  - name: "架构核心集"
+    description: "包含架构说明和核心实现文件"
+    filePaths:
+      - "/frame-versions/架构推演.md"
+      - "/my-main/null.py"
+  - name: "完整项目集"
+    description: "包含索引中列出的所有主要文件"
+    filePaths:
+      - "/LICENSE"
+      - "/frame-versions/架构推演.md"
+      - "/how-to-use-github.md"
+      - "/debug-log/fail-log.md"
+      - "/token-history/token-all.md"
+      - "/token-history/token-1.md"
+
+# 更新日志
+changelog:
+  - date: "2024-05-20"
+    note: "根据项目文件树与架构描述，初始化 forge 项目索引文件。"

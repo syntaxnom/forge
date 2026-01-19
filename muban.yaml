@@ -1,0 +1,47 @@
+# project_index.yaml - 项目协同索引文件
+# 你更新此文件，我即同步获取最新项目上下文
+
+project:
+  name: "omni-message"
+  description: "一个全渠道消息推送服务"
+  mainBranch: "main" # 你的主分支名称
+
+# 核心：文件索引列表
+# 当需要我分析时，你可以在对话中告诉我：“请查看索引中‘关键逻辑’分类下的‘主应用入口’文件”
+files:
+  - category: "项目配置"
+    items:
+      - name: "项目构建配置"
+        path: "/build.gradle.kts"
+        rawUrl: "https://raw.githubusercontent.com/sx-charice/charice-projects/main/omni-message/build.gradle.kts"
+        description: "项目依赖和插件定义"
+        status: "active" # active（活跃）/deprecated（已弃用）/wip（进行中）
+
+  - category: "核心逻辑"
+    items:
+      - name: "主应用入口"
+        path: "/src/main/kotlin/com/charice/Application.kt"
+        rawUrl: "" # 稍后填写
+        description: "Ktor应用启动与路由挂载点"
+        critical: true # 标记为关键文件
+
+  - category: "架构文档"
+    items:
+      - name: "项目架构总览"
+        path: "/docs/ARCHITECTURE.md"
+        rawUrl: "" # 稍后填写
+        description: "系统模块划分与技术选型说明"
+
+# （可选）定义常用的工作集，一次性加载多个相关文件
+workspaces:
+  - name: "启动调试集"
+    description: "启动服务所需的核心文件集合"
+    filePaths:
+      - "/build.gradle.kts"
+      - "/src/main/kotlin/com/charice/Application.kt"
+      - "/src/main/resources/application.conf"
+
+# （可选）更新日志，方便追踪上下文变化
+changelog:
+  - date: "2024-05-20"
+    note: "初始化索引文件，当前重点为搭建基础服务框架。"
