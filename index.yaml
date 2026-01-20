@@ -20,8 +20,8 @@ files:
   - category: "核心架构"
     items:
       - name: "架构推演记录"
-        path: "/frame-versions/架构推演.md"
-        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/frame-versions/%E6%9E%B6%E6%9E%84%E6%8E%A8%E6%BC%94.md"
+        path: "/frame-versions/version-the-spark.md"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/frame-versions/version-the-spark.md"
         description: "记录架构设计演化的过程与版本"
         critical: true
       - name: "架构实现入口 (Python)"
@@ -56,18 +56,23 @@ workspaces:
   - name: "架构核心集"
     description: "包含架构说明和核心实现文件"
     filePaths:
-      - "/frame-versions/架构推演.md"
+      - "/frame-versions/version-the-spark.md"
       - "/my-main/null.py"
+      
   - name: "完整项目集"
     description: "包含索引中列出的所有主要文件"
     filePaths:
       - "/LICENSE"
-      - "/frame-versions/架构推演.md"
+      - "/frame-versions/version-the-spark.md"
       - "/how-to-use-github.md"
       - "/debug-log/fail-log.md"
       - "/token-history/token-all.md"
       - "/token-history/token-clear-all.md"
-
+      
+  - name: "对话历史"
+    description: "包含与AI进行的所有对话内容"
+    filePaths:
+      - "/token-history/token-clear-all.md"
 # 更新日志
 changelog:
   - date: "2024-05-20"
