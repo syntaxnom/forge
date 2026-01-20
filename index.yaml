@@ -46,9 +46,9 @@ files:
         path: "/token-history/token-all.md"
         rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/token-history/token-all.md"
         description: "汇总与AI的对话历史"
-      - name: "对话历史-分段1"
-        path: "/token-history/token-1.md"
-        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/token-history/token-1.md"
+      - name: "对话历史-分段粘贴版"
+        path: "/token-history/token-clear-all.md"
+        rawUrl: "https://raw.githubusercontent.com/syntaxnom/forge/main/token-history/token-clear-all.md"
         description: "与AI的对话历史分段记录 (第一部分)"
 
 # 定义工作集，方便一次性加载相关文件
@@ -66,7 +66,7 @@ workspaces:
       - "/how-to-use-github.md"
       - "/debug-log/fail-log.md"
       - "/token-history/token-all.md"
-      - "/token-history/token-1.md"
+      - "/token-history/token-clear-all.md"
 
 # 更新日志
 changelog:
