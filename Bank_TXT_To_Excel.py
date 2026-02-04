@@ -1,20 +1,14 @@
 """
-智能银行流水转换工具 v3.6 - Win7兼容版
+智能银行流水转换工具 v3.6 - 交互式版本
 功能：智能识别多种银行流水格式，TXT转换为结构化Excel文件
 支持银行：九江银行、工商银行、建设银行、农业银行、中国银行、招商银行等常见格式
 作者：西施先生
 日期：2026-01-13
 
-兼容性说明：
-1. 支持Python 3.8.10+（最后一个完美支持Win7的Python版本）
-2. 支持Windows 7 SP1及以上版本
-3. 无需Python环境即可运行（打包为exe）
-
 修复问题：
 1. 修复交易数据解析问题，正确解析九江银行流水
 2. 基于简单版本改进，保持灵活性同时增强解析能力
 3. 优化正则表达式匹配模式
-4. 添加Python 3.8和Win7兼容性层
 
 -------------------------------------------------------------
 【前期工作】
@@ -26,160 +20,28 @@
     -->因为在线转化后的Excel错误太多，没法用
 """
 
-# ==================== 兼容性层开始 ====================
-# 此部分确保代码在Python 3.8和Windows 7上正常运行
-# 请在打包时使用Python 3.8.10环境
 
+
+
+
+import re
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
 import sys
 import os
-import platform
-import re
-import math
-from datetime import datetime, timedelta
-from typing import List, Dict, Tuple, Optional, Set, Any, Union
+import argparse
+from pathlib import Path
+from typing import List, Dict, Tuple, Optional, Set, Any
+from collections import defaultdict, Counter
 import warnings
 import unicodedata
-from collections import defaultdict, Counter
+import math
+from dataclasses import dataclass
+from enum import Enum
 
 # 忽略警告
 warnings.filterwarnings('ignore')
-
-# 1. 环境检测函数
-def _detect_environment() -> Dict[str, Any]:
-    """检测运行环境"""
-    env_info = {
-        'python_version': sys.version_info,
-        'platform': sys.platform,
-        'windows_version': None,
-        'is_windows_7': False,
-        'is_64bit': platform.machine().endswith('64'),
-        'encoding': sys.getfilesystemencoding()
-    }
-    
-    if sys.platform == 'win32':
-        env_info['windows_version'] = platform.version()
-        # 简单判断Win7
-        try:
-            if env_info['windows_version'].startswith('6.1'):
-                env_info['is_windows_7'] = True
-        except:
-            pass
-    
-    return env_info
-
-# 2. Python 3.8兼容性修复
-def _apply_python38_compat():
-    """确保代码兼容Python 3.8"""
-    
-    # 检查Python版本
-    if sys.version_info < (3, 8, 0):
-        print(f"[警告] Python版本较低: {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}")
-        print("[提示] 推荐使用Python 3.8.10以获得最佳Win7兼容性")
-    
-    # 修复dataclass（Python 3.7引入）
-    try:
-        from dataclasses import dataclass
-        return dataclass
-    except ImportError:
-        # Python 3.7以下回退方案（极少数情况）
-        def simple_dataclass(cls):
-            """简化版dataclass装饰器"""
-            def __init__(self, **kwargs):
-                for key, value in kwargs.items():
-                    setattr(self, key, value)
-            cls.__init__ = __init__
-            return cls
-        return simple_dataclass
-
-# 3. Win7特定优化
-def _apply_win7_tweaks(env_info: Dict[str, Any]) -> bool:
-    """应用Win7特定优化"""
-    if env_info.get('is_windows_7', False):
-        print("[兼容性] 检测到Windows 7，应用兼容性优化")
-        
-        # 设置兼容性环境变量
-        os.environ.setdefault('PYTHONLEGACYWINDOWSSTDIO', '1')
-        
-        # Win7可能需要调整控制台编码
-        if sys.platform == 'win32':
-            try:
-                import ctypes
-                # 设置控制台输出编码为UTF-8
-                ctypes.windll.kernel32.SetConsoleOutputCP(65001)
-                ctypes.windll.kernel32.SetConsoleCP(65001)
-            except:
-                pass
-        
-        return True
-    return False
-
-# 4. 主兼容性初始化
-def _init_compatibility():
-    """初始化兼容性层"""
-    print(f"[环境] Python {sys.version}")
-    print(f"[环境] 平台: {sys.platform}")
-    
-    # 检查最小Python版本
-    if sys.version_info < (3, 6):
-        print(f"[错误] 需要Python 3.6或更高版本，当前: {sys.version}")
-        print("[提示] 请安装Python 3.8.10以获得最佳兼容性")
-        sys.exit(1)
-    
-    # 检测环境
-    env_info = _detect_environment()
-    
-    # 应用Python 3.8兼容性
-    dataclass_decorator = _apply_python38_compat()
-    
-    # 应用Win7优化
-    is_win7 = _apply_win7_tweaks(env_info)
-    
-    # 检查关键库
-    try:
-        import pandas
-        import openpyxl
-        import numpy
-        print(f"[环境] pandas: {pandas.__version__}")
-        print(f"[环境] openpyxl: {openpyxl.__version__}")
-        print(f"[环境] numpy: {numpy.__version__}")
-    except ImportError as e:
-        print(f"[错误] 缺少关键库: {e}")
-        print("[提示] 请运行: pip install pandas==1.3.5 openpyxl==3.0.9 numpy==1.21.6")
-        sys.exit(1)
-    
-    # 设置环境变量优化
-    os.environ.setdefault('PYTHONUTF8', '1')
-    os.environ.setdefault('PYTHONIOENCODING', 'utf-8')
-    
-    return {
-        'dataclass': dataclass_decorator,
-        'is_windows_7': is_win7,
-        'env_info': env_info
-    }
-
-# 初始化兼容性层
-COMPAT_INFO = _init_compatibility()
-
-# 重新导出dataclass，确保代码其他部分能正确使用
-# 优先使用标准库的dataclass，如果不可用则使用兼容版本
-try:
-    from dataclasses import dataclass
-except ImportError:
-    dataclass = COMPAT_INFO['dataclass']
-
-# ==================== 兼容性层结束 ====================
-
-# ==================== 原有代码开始 ====================
-
-# 原有的导入（已经在上面的兼容性层中导入了大部分）
-# 只需要导入pandas和openpyxl（已经在兼容性层中检查过）
-import pandas as pd
-import numpy as np
-
-# 如果需要，导入其他模块
-import argparse
-from pathlib import Path
-from enum import Enum
 
 # ==================== 配置和常量 ====================
 
@@ -334,11 +196,7 @@ def normalize_text(text: str) -> str:
 
 def detect_encoding(file_path: str) -> Tuple[str, float]:
     """智能检测文件编码和置信度"""
-    # Win7兼容性调整：调整编码检测顺序
-    if COMPAT_INFO.get('is_windows_7', False):
-        encodings = ['gbk', 'gb2312', 'utf-8', 'cp936', 'latin-1', 'iso-8859-1']
-    else:
-        encodings = ['utf-8', 'gbk', 'gb2312', 'utf-16', 'utf-16-le', 'iso-8859-1', 'cp936', 'latin-1']
+    encodings = ['utf-8', 'gbk', 'gb2312', 'utf-16', 'utf-16-le', 'utf-16-be', 'iso-8859-1', 'cp936', 'latin-1']
     
     best_encoding = 'utf-8'
     best_confidence = 0.0
@@ -519,7 +377,6 @@ def parse_counterparty_info(text: str) -> Tuple[str, Optional[str]]:
             return name_part, account
     
     return text, None
-    
 
 # ==================== 交互式输入函数 ====================
 
@@ -1191,8 +1048,6 @@ class BankStatementParser:
         self.transactions = transactions
         self.print_debug(f"备用方法解析完成: 找到 {len(transactions)} 条交易")
 
-
-
 # ==================== Excel报告生成器 ====================
 
 class ExcelReportGenerator:
@@ -1368,20 +1223,10 @@ class ExcelReportGenerator:
 def print_banner():
     """打印程序横幅"""
     print("="*70)
-    print("   ---->邦众工具-银行流水转换器 v3.6 - Win7兼容版<------")
+    print("          智能银行流水转换工具 v3.6 - 交互式版本")
     print("="*70)
-    print(" 【前期工作】")
-    print("-->配合PDF24 Creator 先将银行的PDF流水转换为TXT文档")
-    print("-->然后双击本软件，根据提示使用")
-    print("-"*70)
     print("功能: 智能识别多种银行流水格式，转换为结构化Excel文件")
     print("支持: 自动识别银行类型、智能解析交易、全面分析报告")
-    print("-"*70)
-    print("【为什么不直接在线转换】")
-    print("-->因为在线转换 存在数据泄露的风险")
-    print("-->因为在线转化后的Excel错误太多，没法用")
-    
-    print("兼容: Windows10，Windows7 SP1 + Python 3.8.10")
     print("="*70)
     print()
 
@@ -1513,6 +1358,3 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         input("\n[提示] 按Enter键退出...")
-        
-
-
